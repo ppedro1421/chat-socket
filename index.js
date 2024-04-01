@@ -1,35 +1,35 @@
 import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 
-const io = new Server({
+const io = new Server(8000, {
     cors: {
-        origin: "*",
+        origin: ["https://admin.socket.io", "http://localhost:5173"],
+        credentials: true,
     },
 });
 
-let USERS = [];
-
 io.on("connection", (socket) => {
-    socket.on("message", (message) => {
-        let user = USERS.find((users) => users.id === socket.id);
-        if (user) {
-            let username = user.name;
-            io.emit("message", { user: username, message });
-        };
+    console.log(`Connected: ${socket.id}`);
+
+    socket.on("send-message", (message, room) => {
+        socket.to(room).emit("receive-message", message);
     });
 
-    socket.on("new-user", (user) => {
-        if (USERS.some((users) => users.name === user)) {
-            io.to(socket.id).emit("notification", "Usuario já logado.");
-        }
-        else {
-            USERS.push({ name: user, id: socket.id });
-            io.to(socket.id).emit("new-user", user);
-        };
+    socket.on("join-room", (room, callback) => {
+        socket.join(room);
+        callback(`Joined ${room}`);
+    });
+
+    socket.on("leave-room", (room, callback) => {
+        socket.leave(room);
+        callback(`Left ${room}`);
     });
 
     socket.on("disconnect", () => {
-        USERS = USERS.filter((users) => users.id !== socket.id);
+        console.log(`Disconnected: ${socket.id}`);
     });
 });
 
-io.listen(4000);
+instrument(io, {
+    auth: false,
+});
