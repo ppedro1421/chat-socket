@@ -1,10 +1,9 @@
 import { Server } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 
-const io = new Server(8000, {
+const io = new Server(9000, {
   cors: {
-    origin: ["https://admin.socket.io", "http://localhost:5173"],
-    credentials: true,
+    origin: "*",
   },
 });
 
@@ -12,6 +11,7 @@ io.on("connection", (socket) => {
   console.log(`Connected: ${socket.id}`);
 
   socket.on("send-message", (message, room) => {
+    console.log(message, room);
     socket.to(room).emit("receive-message", message);
   });
 
