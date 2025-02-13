@@ -1,5 +1,4 @@
 import { Server } from "socket.io";
-import { instrument } from "@socket.io/admin-ui";
 
 const io = new Server(9000, {
   cors: {
@@ -11,7 +10,6 @@ io.on("connection", (socket) => {
   console.log(`Connected: ${socket.id}`);
 
   socket.on("send-message", (message, room) => {
-    console.log(message, room);
     socket.to(room).emit("receive-message", message);
   });
 
@@ -23,11 +21,15 @@ io.on("connection", (socket) => {
     socket.leave(room);
   });
 
+  socket.on("new-journey", (client, journeyId) => {
+    socket.to(client).emit("journey-created", journeyId);
+  });
+
+  socket.on("end-journey", (client, journeyId) => {
+    socket.to(client).emit("journey-finished", journeyId);
+  });
+
   socket.on("disconnect", () => {
     console.log(`Disconnected: ${socket.id}`);
   });
-});
-
-instrument(io, {
-  auth: false,
 });
