@@ -21,8 +21,8 @@ io.on("connection", (socket) => {
     socket.leave(room);
   });
 
-  socket.on("new-journey", (client, journeyId) => {
-    socket.to(client).emit("journey-created", journeyId);
+  socket.on("new-journey", (client, journeyId, driverId) => {
+    socket.to(client).emit("journey-created", journeyId, driverId);
   });
 
   socket.on("end-journey", (client, journeyId) => {
