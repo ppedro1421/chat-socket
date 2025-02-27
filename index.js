@@ -32,4 +32,12 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`Disconnected: ${socket.id}`);
   });
+
+  socket.on("trigger-panic", (client, journeyId) => {
+    socket.to(client).emit("panic-triggered", journeyId);
+  });
+
+  socket.on("clear-panic", (client, journeyId) => {
+    socket.to(client).emit("panic-cleared", journeyId);
+  });
 });
