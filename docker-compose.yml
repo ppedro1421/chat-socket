@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  websocket:
+    build: .
+    container_name: websocket_container
+    ports:
+      - "3000:9000"
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules
+    environment:
+      - NODE_ENV=development
