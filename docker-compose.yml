@@ -2,11 +2,8 @@ version: "3.8"
 services:
   websocket:
     build: .
-    container_name: websocket_container
+    container_name: websocket_goldentrack
     ports:
-      - "3000:9000"
-    # volumes:
-    #   - .:/app
-    #   - /app/node_modules
+      - 9000:9000
     environment:
       - NODE_ENV=development
